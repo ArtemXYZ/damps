@@ -1,0 +1,90 @@
+# ---------------------------------- Импорт стандартных библиотек Пайтона
+import os
+
+# ---------------------------------- Импорт сторонних библиотек
+import pandas as pd
+
+from joblib import dump  # модуль сохранения и вызова фреймов данных из другого файла
+from joblib import load  # модуль сохранения и вызова фреймов данных из другого файла
+# import pandas as pd
+
+# ---------------------------------- Импорт локальных модулей
+from root_directory import *  # Домашний каталог
+
+# from src.decorators.debug import *  # debug_requests
+from src.recording_events.loger import *  # ?
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# @debug_requests
+
+
+def save_damp(any_df: object, path_save_damp: str, root_dir: str | bytes):
+    """
+    Функция сохранения DataFrame(ов) в damp.
+
+    :param any_df: Любой DataFrame, defaults to None
+    :type any_df: object
+
+    :param path_save_damp: путь сохранения файла (указать)
+    :type path_save_damp: str
+
+    :param root_dir: Домашний каталог
+    :type root_dir: str
+
+    :rtype: object
+    :return: damp
+
+    :notes:
+    , name_damp: str = 'damage_damp'
+    """
+
+    damp_name_file = os.path.join(path_save_damp)  # Относительный путь к файлу и его имя
+    path_file_full = os.path.join(root_dir + damp_name_file)  # _Собираем полный путь к sql запросу:
+
+    if any_df is not None:
+
+        damp = dump(any_df, path_file_full)
+        logger.info(f'Дамп успешно сохранен.')
+    else:
+        damp = None
+        logger.info(f'Проверьте датафрейм на входе функции, значение: None.')
+    return damp
+
+
+def load_damp(path_load_damp: str, root_dir: str | bytes):
+    """
+    Функция загрузки дампа DataFrame(ов).
+
+    :param path_load_damp: путь сохранения файла (указать)
+    :type path_load_damp: str
+
+    :param root_dir: Домашний каталог
+    :type root_dir: str
+
+    :rtype: object
+    :return: damp
+
+    :notes:
+
+    """
+
+    damp_name_file = os.path.join(path_load_damp)  # Относительный путь к файлу и его имя
+    path_file_full = os.path.join(root_dir + damp_name_file)  # _Собираем полный путь к sql запросу:
+
+    if path_load_damp is None:
+        damp = None
+        logger.error(f'Не заданы обязательные параметры функции, значение для "path_load_damp": None!')
+        print(f'Не заданы обязательные параметры функции, значение для "path_load_damp": None!')
+    else:
+        if os.path.isfile(path_file_full) == True:
+            damp = load(path_file_full)
+            logger.info(f'Дамп {path_load_damp} успешно загружен.')
+            print(f'Дамп {path_load_damp} успешно загружен.')
+        else:
+            damp = None
+            logger.error(f'Отсутствует файл дампа. Невозможно осуществить загрузку из {path_load_damp}!')
+            print(f'Отсутствует файл дампа. Невозможно осуществить загрузку из {path_load_damp}!')
+        return damp
+
+    return damp
